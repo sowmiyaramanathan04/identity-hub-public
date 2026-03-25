@@ -16,52 +16,45 @@ PUBLIC_KEY = (BASE / "keys" / "public.pem").read_bytes()
 @app.route("/")
 def home():
     return "Public Cloud Running"
+
 @app.route("/access-service", methods=["POST"])
 def access_service():
-    data = request.get_json()
-
-    token = data.get("token")
-    device_hash = data.get("device_hash")
-
-    decoded = verify_token(token)
-
-    if not decoded or "error" in decoded:
-        return jsonify({"status": "DENIED", "reason": "Invalid Token"}), 401
-
-    return jsonify({"status": "GRANTED"})
-
-@app.route("/verify-access", methods=["POST"])
-def verify_access():
     data = request.json
 
     token = data["token"]
-    requested_service = data["service"]
-    device_id = data["device_id"]
+    device_hash = data["device_hash"]
+    requested_service = data.get("service", "unknown")
 
     try:
-        decoded = verify_token(token, PUBLIC_KEY)
-        token_device_hash = decoded["device_hash"]
+        decoded = verify_token(token)
 
-        if token_device_hash != hash_metadata(device_id):
+        if not decoded or "error" in decoded:
+            return jsonify({"access": "DENIED", "reason": "Invalid Token"}), 401
+
+
+        token_device_hash = decoded["meta"]["device"]
+
+        if token_device_hash != device_hash:
             return jsonify({"access": "DENIED", "reason": "Device mismatch"}), 403
 
-
+        
         claims = {
             "isAdult": decrypt_value(decoded["claims"]["isAdult"]),
             "isStudent": decrypt_value(decoded["claims"]["isStudent"]),
             "isHealthEligible": decrypt_value(decoded["claims"]["isHealthEligible"])
         }
 
-
+        
         decision = evaluate_policy(requested_service, claims)
 
-
-        log_access(decoded["duid"], requested_service, decision)
+        log_access(decoded["sub"], requested_service, decision)
 
         return jsonify({"access": decision})
 
     except Exception as e:
         return jsonify({"access": "DENIED", "error": str(e)}), 500
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
