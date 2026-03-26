@@ -62,7 +62,9 @@ def access_service():
 
     except Exception as e:
         return jsonify({"access": "DENIED", "error": str(e)}), 500
-
+print("TOKEN DEVICE HASH:", decoded["meta"]["device"])
+print("RECEIVED DEVICE HASH:", device_hash)
+print("DECRYPTED CLAIMS:", claims)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
