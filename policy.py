@@ -1,12 +1,15 @@
 def evaluate_policy(service, claims):
+    is_adult = int(claims["isAdult"])
+    is_student = int(claims["isStudent"])
+    is_health = int(claims["isHealthEligible"])
 
     if service == "education":
-        return claims.get("isStudent") == "1"
+        return "GRANTED" if is_student == 1 else "DENIED"
 
-    if service == "welfare":
-        return claims.get("isAdult") == "1"
+    elif service == "health":
+        return "GRANTED" if is_health == 1 else "DENIED"
 
-    if service == "health":
-        return claims.get("isHealthEligible") == "1"
+    elif service == "welfare":
+        return "GRANTED" if is_adult == 1 else "DENIED"
 
-    return False
+    return "DENIED"
