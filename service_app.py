@@ -28,17 +28,13 @@ def access_service():
     requested_service = data.get("service", "unknown")
 
     try:
-        # -------------------------
-        # VERIFY TOKEN
-        # -------------------------
+       
         decoded = verify_token(token)
 
         if not decoded or "error" in decoded:
             return jsonify({"access": "DENIED", "reason": "Invalid Token"}), 401
 
-        # -------------------------
-        # DEVICE CHECK
-        # -------------------------
+       
         token_device_hash = decoded.get("meta", {}).get("device")
 
         print("TOKEN DEVICE HASH:", token_device_hash)
@@ -47,18 +43,14 @@ def access_service():
         if token_device_hash != device_hash:
             print("⚠️ Device mismatch ignored for demo")
 
-        # -------------------------
-        # SAFE DEFAULT CLAIMS
-        # -------------------------
+        
         claims = {
             "isAdult": 0,
             "isStudent": 0,
             "isHealthEligible": 0
         }
 
-        # -------------------------
-        # SAFE DECRYPTION
-        # -------------------------
+        
         try:
             claims = {
                 "isAdult": int(decrypt_value(decoded["claims"]["isAdult"]).strip()),
@@ -71,9 +63,7 @@ def access_service():
 
         print("DECRYPTED CLAIMS:", claims)
 
-        # -------------------------
-        # DEMO POLICY (STABLE)
-        # -------------------------
+        
         if requested_service == "education" and claims["isStudent"] == 1:
             decision = "GRANTED"
         elif requested_service in ["health", "welfare"]:
@@ -81,9 +71,7 @@ def access_service():
         else:
             decision = "DENIED"
 
-        # -------------------------
-        # LOGGING
-        # -------------------------
+        
         log_access(
     decoded.get("sub", "unknown"),
     requested_service,
