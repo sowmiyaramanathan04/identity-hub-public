@@ -52,10 +52,10 @@ def access_service():
 
         
         claims = {
-            "isAdult": decrypt_value(decoded["claims"]["isAdult"]),
-            "isStudent": decrypt_value(decoded["claims"]["isStudent"]),
-            "isHealthEligible": decrypt_value(decoded["claims"]["isHealthEligible"])
-        }
+    "isAdult": int(decrypt_value(decoded["claims"]["isAdult"]).strip()),
+    "isStudent": int(decrypt_value(decoded["claims"]["isStudent"]).strip()),
+    "isHealthEligible": int(decrypt_value(decoded["claims"]["isHealthEligible"]).strip())
+}
 
         
         decision = evaluate_policy(requested_service, claims)
