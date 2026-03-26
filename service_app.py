@@ -1,3 +1,4 @@
+used_tokens = set()
 from flask import Flask, request, jsonify
 from pathlib import Path
 
@@ -27,6 +28,13 @@ def access_service():
 
     try:
         decoded = verify_token(token)
+
+        if token in used_tokens:
+             return jsonify({
+                  "access": "DENIED",
+                  "reason": "Replay attack detected"
+                  }), 403
+        used_tokens.add(token)
 
         if not decoded or "error" in decoded:
             return jsonify({"access": "DENIED", "reason": "Invalid Token"}), 401
