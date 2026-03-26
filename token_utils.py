@@ -13,7 +13,8 @@ def verify_token(token: str):
         decoded = jwt.decode(
             token,
             PUBLIC_KEY,
-            algorithms=["RS256"]
+            algorithms=["RS256"],
+            audience="public-services"
         )
         return decoded
     except jwt.ExpiredSignatureError:
