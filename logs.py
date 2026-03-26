@@ -2,8 +2,9 @@ import sqlite3
 from pathlib import Path
 import time
 from datetime import datetime
+import os
 
-DB_PATH = Path(__file__).parent / "public.db"
+DB_PATH = os.path.join("/tmp", "public.db")
 
 
 def init_public_db():
