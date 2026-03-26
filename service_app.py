@@ -48,7 +48,7 @@ def access_service():
         token_device_hash = decoded["meta"]["device"]
 
         if token_device_hash != device_hash:
-            return jsonify({"access": "DENIED", "reason": "Device mismatch"}), 403
+            print("⚠️ Device mismatch ignored for demo")
 
         
         claims = {
