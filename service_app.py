@@ -1,6 +1,7 @@
 used_tokens = set()
 from flask import Flask, request, jsonify
 from pathlib import Path
+import os
 
 from crypto import decrypt_value, hash_metadata
 from logs import init_public_db, log_access
@@ -63,6 +64,6 @@ def access_service():
         return jsonify({"access": "DENIED", "error": str(e)}), 500
 
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
