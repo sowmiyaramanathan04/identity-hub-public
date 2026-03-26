@@ -84,7 +84,12 @@ def access_service():
         # -------------------------
         # LOGGING
         # -------------------------
-        log_access(decoded.get("sub", "unknown"), requested_service, decision)
+        log_access(
+    decoded.get("sub", "unknown"),
+    requested_service,
+    decision,
+    device_hash 
+)
 
         return jsonify({"access": decision})
 
