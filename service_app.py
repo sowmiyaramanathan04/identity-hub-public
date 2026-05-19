@@ -41,8 +41,10 @@ def access_service():
         print("RECEIVED DEVICE HASH:", device_hash)
 
         if token_device_hash != device_hash:
-            print("⚠️ Device mismatch ignored for demo")
-
+            return jsonify({
+                "access": "DENIED",
+                "reason": "Device mismatch"
+                }), 403
         
         claims = {
             "isAdult": 0,
@@ -64,10 +66,12 @@ def access_service():
         print("DECRYPTED CLAIMS:", claims)
 
         
-        if requested_service == "education" and claims["isStudent"] == 1:
-            decision = "GRANTED"
-        elif requested_service in ["health", "welfare"]:
-            decision = "GRANTED"
+        if requested_service == "education":
+            decision = "GRANTED" if claims["isStudent"] == 1 else "DENIED"
+        elif requested_service == "health":
+            decision = "GRANTED" if claims["isHealthEligible"] == 1 else "DENIED"
+        elif requested_service == "welfare":
+            decision = "GRANTED" if claims["isAdult"] == 1 else "DENIED"
         else:
             decision = "DENIED"
 
